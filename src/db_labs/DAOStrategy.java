@@ -17,10 +17,11 @@ public interface DAOStrategy {
     public abstract void openDatabaseConnection()
         throws  ClassNotFoundException, SQLException;
         
-//    public abstract void closeDatabaseConnection()
-//        throws SQLException;
+    public abstract void closeDatabaseConnection()
+        throws SQLException;
     
-    public abstract void createRecord(String query)    // C.
+    public abstract void createRecord(String hotelName, String street,
+            String city, String state )                  // C.
         throws SQLException;
 //    public abstract List getRecord(String query)       // R.
 //        throws SQLException;
