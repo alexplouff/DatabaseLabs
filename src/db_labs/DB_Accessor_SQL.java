@@ -16,8 +16,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -121,37 +119,61 @@ public class DB_Accessor_SQL {
         return list;
     }
     
-    public void createRecord(String query) throws SQLException {
+    public void createRecord(List<String> columns, List<String> values) throws SQLException {
         
-        PreparedStatement pStmt = conn.prepareStatement(query);
+        StringBuilder sb = new StringBuilder("INSERT INTO hotel (");
+        for(String col : columns) {
+            sb.append(col).append(",");
+        }
+        sb = sb.deleteCharAt(sb.length()-1);
+        sb.append(") VALUES (");
+        for(String val : values) {
+            sb.append("?,");
+        }
+        sb = sb.deleteCharAt(sb.length()-1);
+        sb.append(")");
+        
+        PreparedStatement pStmt = conn.prepareStatement(sb.toString());
+        
+        for(int i=0; i < values.size(); i++) {
+            pStmt.setObject(i+1, values.get(i));
+        }
+        
         pStmt.executeUpdate();
         conn.close();
     }
     
-    public void updateRecord(String query) throws SQLException {
+    public void updateRecord(String tableName, String column, String value, String identifier) throws SQLException {
         
-        PreparedStatement pStmt = conn.prepareStatement(query);
-        pStmt.executeUpdate();
-        conn.close();
+        StringBuilder sb = new StringBuilder("UPDATE ");
+            
+        sb.append(tableName).append(" SET ").append(column).append("=")
+                .append(value).append(" WHERE ").append(column).append( "=").append(identifier);
+
+            
+        
+       // sb = sb.append( " WHERE ").append(column).append("=").append(column);
+        
+        PreparedStatement pStmt = conn.prepareStatement(sb.toString());
     }
 
-    public static void main(String[] args) {
-
-        DB_Accessor_SQL db = new DB_Accessor_SQL("com.mysql.jdbc.Driver",
-                "jdbc:mysql://localhost:3306/sakila",
-                "root", "password");
-
-        try {
-            db.openDatabaseConnection();
-           // System.out.println(db.getAllRecords());
-            db.createRecord("INSERT INTO hotel (hotel_id,hotel_name,street,city,state,notes)\n" +
-            "VALUES (null, \"Radisson\", \"1234 Fake St\", \"Milwaukee\", \"WI\", \"none\")");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(DB_Accessor_SQL.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(DB_Accessor_SQL.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-    }
+//    public static void main(String[] args) {
+//
+//        DB_Accessor_SQL db = new DB_Accessor_SQL("com.mysql.jdbc.Driver",
+//                "jdbc:mysql://localhost:3306/sakila",
+//                "root", "password");
+//
+//        try {
+////            db.openDatabaseConnection();
+//           // System.out.println(db.getAllRecords());
+////            db.createRecord("INSERT INTO hotel (hotel_id,hotel_name,street,city,state,notes)\n" +
+////            "VALUES (null, \"Radisson\", \"1234 Fake St\", \"Milwaukee\", \"WI\", \"none\")");
+//        } catch (ClassNotFoundException ex) {
+//            Logger.getLogger(DB_Accessor_SQL.class.getName()).log(Level.SEVERE, null, ex);
+//        } catch (SQLException ex) {
+//            Logger.getLogger(DB_Accessor_SQL.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//
+//    }
 
 }

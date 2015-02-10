@@ -6,15 +6,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 /**
- *
  * @author Alex
  */
+
 public class HotelDAO implements DAOStrategy {
 
     private DB_Accessor_SQL db;
@@ -67,17 +62,16 @@ public class HotelDAO implements DAOStrategy {
         values.add(hotel.getCity());
         values.add(hotel.getState());
         values.add(null);
-
-        String sql_query = "INSERT INTO hotel ("+columns+")"
-                + "Values ("+values+")";
-
-        db.createRecord(sql_query);
+        
+        db.createRecord(columns,values);
         System.out.println("end of method");
     }
 
-    public void updateRecord(String query) throws SQLException {
-
-        db.updateRecord(query);
+    public void updateRecord(String column, String value, String identifier) throws SQLException {
+        final String table = "hotel";
+        
+        db.updateRecord(table, column, value, identifier);
+        
     }
 
     @Override
@@ -98,7 +92,8 @@ public class HotelDAO implements DAOStrategy {
                     "root", "password"));
             dao.openDatabaseConnection();
 //            System.out.println(dao.getAllRecords());
-            dao.createRecord("Super 9","Oakland Ave.", "Milwaukee", "WI");
+//            dao.createRecord("Super 9","Oakland Ave.", "Milwaukee", "WI");
+            dao.updateRecord("hotel_name", "Super8", "Radisson");
             dao.closeDatabaseConnection();
         } catch (Exception ex) {
             
